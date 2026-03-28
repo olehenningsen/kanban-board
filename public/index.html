@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban Board</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="login-screen" class="login-screen hidden">
+    <div class="login-card">
+      <div class="login-logo">📋</div>
+      <h1>Kanban Board</h1>
+      <p class="login-subtitle">Indtast adgangskode for at fortsætte</p>
+      <form id="login-form">
+        <input type="password" id="login-password" placeholder="Adgangskode" autocomplete="current-password" required>
+        <button type="submit">Log ind</button>
+        <p id="login-error" class="login-error hidden"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="hidden">
+    <header>
+      <div class="header-left">
+        <span class="header-logo">📋</span>
+        <h1>Kanban Board</h1>
+      </div>
+      <div class="header-right">
+        <button id="add-card-btn" class="btn-primary">+ Nyt kort</button>
+        <button id="logout-btn" class="btn-ghost">Log ud</button>
+      </div>
+    </header>
+
+    <main id="board" class="board"></main>
+  </div>
+
+  <!-- Card Modal -->
+  <div id="card-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Nyt kort</h2>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <form id="card-form">
+        <input type="hidden" id="card-id">
+        <input type="hidden" id="card-column">
+        
+        <label for="card-title">Titel</label>
+        <input type="text" id="card-title" required placeholder="Kort titel...">
+        
+        <label for="card-description">Beskrivelse</label>
+        <textarea id="card-description" rows="3" placeholder="Beskrivelse (valgfrit)..."></textarea>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="card-priority">Prioritet</label>
+            <select id="card-priority">
+              <option value="low">Lav</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">Høj</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="card-assignee">Ansvarlig</label>
+            <select id="card-assignee">
+              <option value="Ole">Ole</option>
+              <option value="Henry">Henry</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row" id="column-select-row">
+          <div class="form-group" style="flex:1">
+            <label for="card-target-column">Kolonne</label>
+            <select id="card-target-column">
+              <option value="backlog">Backlog</option>
+              <option value="todo">Opgaver</option>
+              <option value="inprogress">I gang</option>
+              <option value="done">Færdig</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" id="delete-card-btn" class="btn-danger hidden">Slet</button>
+          <div class="form-actions-right">
+            <button type="button" class="btn-ghost" id="modal-cancel">Annuller</button>
+            <button type="submit" class="btn-primary">Gem</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
