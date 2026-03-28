@@ -7,7 +7,8 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3333;
-const DATA_FILE = path.join(__dirname, 'kanban-data.json');
+const DATA_DIR = process.env.DATA_DIR || __dirname;
+const DATA_FILE = path.join(DATA_DIR, 'kanban-data.json');
 
 // Middleware
 app.use(express.json());
