@@ -21,6 +21,31 @@ app.use(session({
   cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 7 days
 }));
 
+// Webhook helper — fires when a card lands in "todo" (Opgaver) column
+async function fireWebhook(event, card, columnId) {
+  const url = process.env.WEBHOOK_URL;
+  if (!url || columnId !== 'todo') return;
+  try {
+    const payload = JSON.stringify({ event, card, columnId, timestamp: new Date().toISOString() });
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    });
+    console.log(`Webhook ${event}: ${resp.status}`);
+  } catch (err) {
+    console.error('Webhook error:', err.message);
+  }
+}
+
+// Notifications store (in-memory, survives until restart)
+let pendingNotifications = [];
+
+function addNotification(event, card, columnId) {
+  if (columnId !== 'todo') return;
+  pendingNotifications.push({ event, card, columnId, timestamp: new Date().toISOString() });
+}
+
 // Data helpers
 function readData() {
   if (!fs.existsSync(DATA_FILE)) {
@@ -87,6 +112,8 @@ app.post('/api/cards', requireAuth, (req, res) => {
   card.createdAt = new Date().toISOString();
   col.cards.push(card);
   writeData(data);
+  fireWebhook('card_created', card, columnId);
+  addNotification('card_created', card, columnId);
   res.json(card);
 });
 
@@ -136,7 +163,16 @@ app.put('/api/move', requireAuth, (req, res) => {
   const insertAt = typeof toIndex === 'number' ? toIndex : toCol.cards.length;
   toCol.cards.splice(insertAt, 0, card);
   writeData(data);
+  fireWebhook('card_moved', card, toColumnId);
+  addNotification('card_moved', card, toColumnId);
   res.json({ success: true });
+});
+
+// Notifications endpoint — lightweight polling target
+app.get('/api/notifications', requireAuth, (req, res) => {
+  const notes = [...pendingNotifications];
+  pendingNotifications = [];
+  res.json(notes);
 });
 
 // SPA fallback
