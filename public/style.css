@@ -102,6 +102,7 @@ header {
 .header-left { display: flex; align-items: center; gap: 10px; }
 .header-logo { font-size: 24px; }
 header h1 { font-size: 18px; font-weight: 700; }
+.version-label { font-size: 11px; font-weight: 500; opacity: 0.5; letter-spacing: 0.5px; }
 
 .header-right { display: flex; align-items: center; gap: 8px; }
 
